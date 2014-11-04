@@ -1,0 +1,26 @@
+{
+  "name": "tempmail.js",
+  "main": "dist/tempmail.js",
+  "version": "0.1.1",
+  "homepage": "https://github.com/mileszim/tempmail.js",
+  "authors": [
+    "Miles Zimmerman <miles@zserver.org>"
+  ],
+  "description": "Programatically generate and receive mail from temporary email addresses. Works in browsers and in node.js.",
+  "keywords": [
+    "tempmail",
+    "api",
+    "email",
+    "temporary",
+    "inbox",
+    "browser"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

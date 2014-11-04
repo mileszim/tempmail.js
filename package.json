@@ -1,6 +1,6 @@
 {
   "name": "tempmail.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Programatically generate and receive mail from temporary email addresses. Works in browsers and in node.js.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,6 @@
     "api",
     "email",
 		"temporary",
-		"api",
 		"inbox",
 		"browser"
   ],
