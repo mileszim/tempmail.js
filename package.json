@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/mileszim/tempmail.js",
   "dependencies": {
-    "blueimp-md5": "^1.1.0"
+    "blueimp-md5": "^1.1.0",
+    "browser-request": "^0.3.2"
   }
 }
