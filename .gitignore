@@ -26,3 +26,9 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
+
+# Bower
+bower_modules
+
+# OS X
+.DS_Store
