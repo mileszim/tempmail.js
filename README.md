@@ -1,7 +1,7 @@
 tempmail.js
 ===========
 
-Programatically generate and receive mail from temporary email addresses.
+Programatically generate and receive mail from temporary email addresses. Works in browsers and in node.js.
 
 [tempmail.js]("https://github.com/mileszim/tempmail.js") provides a JavaScript wrapper around ```api.temp-mail.ru```.
 
