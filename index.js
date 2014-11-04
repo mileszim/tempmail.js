@@ -1,11 +1,11 @@
 /** Dependencies */
-var request = require('superagent');
+var request = require('jsonp-client');
 var md5     = require('blueimp-md5').md5;
 
 
 /** @const */
 var API_BASE         = 'http://api.temp-mail.ru/request/';
-var API_FORMAT       = '/format/json';
+var API_FORMAT       = '/format/jsonp?callback=messages';
 var ENDPOINT_INBOX   = 'mail/id';
 var ENDPOINT_DOMAINS = 'domains';
 var ADDRESS_DOMAINS  = ['alivance.com', 'walkmail.net', 'lackmail.net', 'bigprofessor.so'];
@@ -33,12 +33,12 @@ TempMail.prototype = {
 	 */
 	getMail: function(cb) {
 		var endpoint = [API_BASE, ENDPOINT_INBOX, '/', this.address_id, API_FORMAT].join('');
-		request(endpoint).end(function(error, res) {
-			if (error || res.body.error) {
+		request(endpoint, function(error, res) {
+			if (error) {
 				cb([]);
 				return [];
 			} else {
-				cb(res.body.map(TempMail._formatMessage));
+				cb(res.map(TempMail._formatMessage));
 			}
 		});
 	},
@@ -49,12 +49,12 @@ TempMail.prototype = {
 	 */
 	domains: function(cb) {
 		var endpoint = [API_BASE, ENDPOINT_DOMAINS, API_FORMAT].join('');
-		request(endpoint).end(function(error, res) {
+		request(endpoint, function(error, res) {
 			if (error || res.body.error) {
 				cb([]);
 				return [];
 			} else {
-				cb(res.body);
+				cb(res);
 			}
 		});
 	}
