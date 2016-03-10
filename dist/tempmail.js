@@ -1,13 +1,13 @@
-/*! tempmail.js 2014-11-03 */
+/*! tempmail.js 2016-03-10 */
 
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.tempmail=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.tempmail = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /** Dependencies */
 var request = require('jsonp-client');
 var md5     = require('blueimp-md5').md5;
 
 
 /** @const */
-var API_BASE         = 'https://api.temp-mail.ru/request/';
+var API_BASE         = 'http://api.temp-mail.ru/request/';
 var API_FORMAT       = '/format/jsonp?callback=messages';
 var ENDPOINT_INBOX   = 'mail/id';
 var ENDPOINT_DOMAINS = 'domains';
@@ -135,7 +135,7 @@ TempMail._domainsURL = function() {
 
 /** Export */
 module.exports = TempMail;
-},{"blueimp-md5":2,"jsonp-client":4}],2:[function(require,module,exports){
+},{"blueimp-md5":2,"jsonp-client":6}],2:[function(require,module,exports){
 /*
  * JavaScript MD5 1.0.1
  * https://github.com/blueimp/JavaScript-MD5
@@ -414,6 +414,19 @@ module.exports = TempMail;
 },{}],3:[function(require,module,exports){
 
 },{}],4:[function(require,module,exports){
+arguments[4][3][0].apply(exports,arguments)
+},{"dup":3}],5:[function(require,module,exports){
+
+var indexOf = [].indexOf;
+
+module.exports = function(arr, obj){
+  if (indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+},{}],6:[function(require,module,exports){
 // jsonp-client
 // -----------------
 // Copyright(c) 2013 Bermi Ferrer <bermi@bermilabs.com>
@@ -586,5 +599,262 @@ module.exports = TempMail;
 
   // Establish the root object, `window` in the browser, or `global` on the server.
 }(this));
-},{"./jsonp-node.js":3}]},{},[1])(1)
+},{"./jsonp-node.js":7}],7:[function(require,module,exports){
+"use strict";
+
+var request = require('request'),
+  vm = require('vm'),
+  fs = require('fs'),
+  parensRegex = /(^\(|\);?\s*$)/,
+  functionRegex = /^[a-z\d_]*\(/i,
+  functionNameRegex = /([\w\d_]*)\(/,
+  evalJsonp,
+  parseJsonp,
+  evalOrParseJavascript,
+  fetchRemoteJsonp,
+  fetchUrl,
+  fetchLocalJsonp;
+
+
+// Lazy JSONp extraction by JSON.parsing the callback argument
+parseJsonp = function (javascript, callback) {
+  var err = null,
+    jsonString, json;
+  try {
+    // chomp off anything that looks like a function name, remove parenthesis
+    jsonString = javascript.replace(functionRegex, "").replace(parensRegex, "");
+    json = JSON.parse(jsonString);
+  } catch (error) {
+    err = error;
+  }
+  callback(err, json);
+};
+
+// Creates a JavaScript VM in order to evaluate
+// javascript from jsonp calls. This is expensive
+// so make sure you cache the results
+evalJsonp = function (javascript, cb) {
+  var context, jsonp_callback_name, code;
+  javascript = (javascript || '') + '';
+
+  context = vm.createContext({
+    error: null,
+    cbData: null
+  });
+
+  jsonp_callback_name = (javascript.match(functionNameRegex) || [null, false])[1];
+
+  code = "function " + jsonp_callback_name + " (data) { cbData = data } " +
+         ' try { ' + javascript + ' } catch(e) { error = e;} ';
+
+  try {
+    if (!jsonp_callback_name) {
+      throw new Error('Could not discover jsonp callback name on "' + javascript + '"');
+    }
+
+    vm.runInContext(code, context);
+  } catch (e) {
+    cb(new Error(e));
+  }
+
+  if (context.error) { return cb(new Error(context.error)); }
+  cb(null, context.cbData);
+};
+
+// Given a javascript buffer this method will attempt
+// to parse it as a string or it will attempt to run it
+// on a vm
+evalOrParseJavascript = function (javascript, callback) {
+  javascript = javascript.toString();
+  parseJsonp(javascript, function (err, json) {
+    if (err) {
+      return evalJsonp(javascript, function (err, json) {
+        callback(err, json);
+      });
+    }
+    callback(err, json);
+  });
+};
+
+// Fetches a URL and returns a buffer with the response
+fetchUrl = function (url_to_fetch, callback) {
+  request(url_to_fetch, function (err, res, body) {
+    if (err || !res || res.statusCode >= 400) {
+      err = new Error('Could not fetch url ' + url_to_fetch + ', with status ' + (res && res.statusCode) + '. Got error: ' + (err && err.message) + '.');
+    }
+    callback(err, body);
+  });
+};
+
+// Fetches a jsonp response from a remote service
+// Make sure you cache the responses as this process
+// creates a JavaScript VM to safely evaluate the javascript
+fetchRemoteJsonp = function (remote_url, callback) {
+  fetchUrl(remote_url, function (err, body) {
+    if (err) {
+      return callback(err);
+    }
+
+    evalOrParseJavascript(body, callback);
+  });
+};
+
+// Retrieves a local file and evaluates the JSON script on a JS VM
+fetchLocalJsonp = function (file_path, callback) {
+  file_path = file_path.split('?')[0];
+  fs.readFile(file_path, function (err, jsonp) {
+    if (err) { return callback(err); }
+    evalOrParseJavascript(jsonp, callback);
+  });
+};
+
+module.exports = function (jsonp_path_or_url, callback) {
+  if (jsonp_path_or_url.match(/^http/)) {
+    fetchRemoteJsonp(jsonp_path_or_url, callback);
+  } else {
+    fetchLocalJsonp(jsonp_path_or_url, callback);
+  }
+};
+
+},{"fs":4,"request":3,"vm":8}],8:[function(require,module,exports){
+var indexOf = require('indexof');
+
+var Object_keys = function (obj) {
+    if (Object.keys) return Object.keys(obj)
+    else {
+        var res = [];
+        for (var key in obj) res.push(key)
+        return res;
+    }
+};
+
+var forEach = function (xs, fn) {
+    if (xs.forEach) return xs.forEach(fn)
+    else for (var i = 0; i < xs.length; i++) {
+        fn(xs[i], i, xs);
+    }
+};
+
+var defineProp = (function() {
+    try {
+        Object.defineProperty({}, '_', {});
+        return function(obj, name, value) {
+            Object.defineProperty(obj, name, {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: value
+            })
+        };
+    } catch(e) {
+        return function(obj, name, value) {
+            obj[name] = value;
+        };
+    }
+}());
+
+var globals = ['Array', 'Boolean', 'Date', 'Error', 'EvalError', 'Function',
+'Infinity', 'JSON', 'Math', 'NaN', 'Number', 'Object', 'RangeError',
+'ReferenceError', 'RegExp', 'String', 'SyntaxError', 'TypeError', 'URIError',
+'decodeURI', 'decodeURIComponent', 'encodeURI', 'encodeURIComponent', 'escape',
+'eval', 'isFinite', 'isNaN', 'parseFloat', 'parseInt', 'undefined', 'unescape'];
+
+function Context() {}
+Context.prototype = {};
+
+var Script = exports.Script = function NodeScript (code) {
+    if (!(this instanceof Script)) return new Script(code);
+    this.code = code;
+};
+
+Script.prototype.runInContext = function (context) {
+    if (!(context instanceof Context)) {
+        throw new TypeError("needs a 'context' argument.");
+    }
+    
+    var iframe = document.createElement('iframe');
+    if (!iframe.style) iframe.style = {};
+    iframe.style.display = 'none';
+    
+    document.body.appendChild(iframe);
+    
+    var win = iframe.contentWindow;
+    var wEval = win.eval, wExecScript = win.execScript;
+
+    if (!wEval && wExecScript) {
+        // win.eval() magically appears when this is called in IE:
+        wExecScript.call(win, 'null');
+        wEval = win.eval;
+    }
+    
+    forEach(Object_keys(context), function (key) {
+        win[key] = context[key];
+    });
+    forEach(globals, function (key) {
+        if (context[key]) {
+            win[key] = context[key];
+        }
+    });
+    
+    var winKeys = Object_keys(win);
+
+    var res = wEval.call(win, this.code);
+    
+    forEach(Object_keys(win), function (key) {
+        // Avoid copying circular objects like `top` and `window` by only
+        // updating existing context properties or new properties in the `win`
+        // that was only introduced after the eval.
+        if (key in context || indexOf(winKeys, key) === -1) {
+            context[key] = win[key];
+        }
+    });
+
+    forEach(globals, function (key) {
+        if (!(key in context)) {
+            defineProp(context, key, win[key]);
+        }
+    });
+    
+    document.body.removeChild(iframe);
+    
+    return res;
+};
+
+Script.prototype.runInThisContext = function () {
+    return eval(this.code); // maybe...
+};
+
+Script.prototype.runInNewContext = function (context) {
+    var ctx = Script.createContext(context);
+    var res = this.runInContext(ctx);
+
+    forEach(Object_keys(ctx), function (key) {
+        context[key] = ctx[key];
+    });
+
+    return res;
+};
+
+forEach(Object_keys(Script.prototype), function (name) {
+    exports[name] = Script[name] = function (code) {
+        var s = Script(code);
+        return s[name].apply(s, [].slice.call(arguments, 1));
+    };
+});
+
+exports.createScript = function (code) {
+    return exports.Script(code);
+};
+
+exports.createContext = Script.createContext = function (context) {
+    var copy = new Context();
+    if(typeof context === 'object') {
+        forEach(Object_keys(context), function (key) {
+            copy[key] = context[key];
+        });
+    }
+    return copy;
+};
+
+},{"indexof":5}]},{},[1])(1)
 });
