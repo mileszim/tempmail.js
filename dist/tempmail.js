@@ -7,7 +7,7 @@ var md5     = require('blueimp-md5').md5;
 
 
 /** @const */
-var API_BASE         = 'http://api.temp-mail.ru/request/';
+var API_BASE         = 'https://api.temp-mail.ru/request/';
 var API_FORMAT       = '/format/jsonp?callback=messages';
 var ENDPOINT_INBOX   = 'mail/id';
 var ENDPOINT_DOMAINS = 'domains';
