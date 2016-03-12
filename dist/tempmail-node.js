@@ -106,142 +106,142 @@ function deleteMessageURL(message_id) {
 }
 
 var TempMail = function () {
-	/**
-  * @constructor
-  * @param {string} address - A temp-mail.ru email address. Generated if not provided.
-  */
-
-	function TempMail(address) {
-		babelHelpers.classCallCheck(this, TempMail);
-
-		this.address = address || randomEmail();
-		this.address_id = md5(this.address);
-		this.fetch = IS_NODE ? fetch : fetchJsonp;
-	}
-
-	/**
-  * Get Mail
-  */
-
-
-	babelHelpers.createClass(TempMail, [{
-		key: 'getMail',
-		value: function getMail() {
-			var response, messages;
-			return regeneratorRuntime.async(function getMail$(_context) {
-				while (1) {
-					switch (_context.prev = _context.next) {
-						case 0:
-							_context.prev = 0;
-							_context.next = 3;
-							return regeneratorRuntime.awrap(this.fetch(inboxURL(this.address_id)));
-
-						case 3:
-							response = _context.sent;
-							messages = response.json();
-
-							if (!messages[0]) {
-								_context.next = 7;
-								break;
-							}
-
-							return _context.abrupt('return', messages.map(formatMessage));
-
-						case 7:
-							return _context.abrupt('return', messages);
-
-						case 10:
-							_context.prev = 10;
-							_context.t0 = _context['catch'](0);
-
-							console.error(_context.t0);
-
-						case 13:
-							return _context.abrupt('return', []);
-
-						case 14:
-						case 'end':
-							return _context.stop();
-					}
-				}
-			}, null, this, [[0, 10]]);
-		}
-
-		/**
-   * Address Domains
+  /**
+   * @constructor
+   * @param {string} address - A temp-mail.ru email address. Generated if not provided.
    */
 
-	}, {
-		key: 'domains',
-		value: function domains() {
-			var domains;
-			return regeneratorRuntime.async(function domains$(_context2) {
-				while (1) {
-					switch (_context2.prev = _context2.next) {
-						case 0:
-							_context2.prev = 0;
-							_context2.next = 3;
-							return regeneratorRuntime.awrap(this.fetch(domainsURL()));
+  function TempMail(address) {
+    babelHelpers.classCallCheck(this, TempMail);
 
-						case 3:
-							domains = _context2.sent;
-							return _context2.abrupt('return', domains.json());
+    this.address = address || randomEmail();
+    this.address_id = md5(this.address);
+    this.fetch = IS_NODE ? fetch : fetchJsonp;
+  }
 
-						case 7:
-							_context2.prev = 7;
-							_context2.t0 = _context2['catch'](0);
-
-							console.error(_context2.t0);
-
-						case 10:
-							return _context2.abrupt('return', []);
-
-						case 11:
-						case 'end':
-							return _context2.stop();
-					}
-				}
-			}, null, this, [[0, 7]]);
-		}
-
-		/**
-   * Delete Message
+  /**
+   * Get Mail
    */
 
-	}, {
-		key: 'deleteMessage',
-		value: function deleteMessage(message_id) {
-			var deletedMessage;
-			return regeneratorRuntime.async(function deleteMessage$(_context3) {
-				while (1) {
-					switch (_context3.prev = _context3.next) {
-						case 0:
-							_context3.prev = 0;
-							_context3.next = 3;
-							return regeneratorRuntime.awrap(this.fetch(deleteMessageURL(message_id)));
 
-						case 3:
-							deletedMessage = _context3.sent;
-							return _context3.abrupt('return', deletedMessage.json());
+  babelHelpers.createClass(TempMail, [{
+    key: 'getMail',
+    value: function getMail() {
+      var response, messages;
+      return regeneratorRuntime.async(function getMail$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.prev = 0;
+              _context.next = 3;
+              return regeneratorRuntime.awrap(this.fetch(inboxURL(this.address_id)));
 
-						case 7:
-							_context3.prev = 7;
-							_context3.t0 = _context3['catch'](0);
+            case 3:
+              response = _context.sent;
+              messages = response.json();
 
-							console.error(_context3.t0);
+              if (!messages[0]) {
+                _context.next = 7;
+                break;
+              }
 
-						case 10:
-							return _context3.abrupt('return', []);
+              return _context.abrupt('return', messages.map(formatMessage));
 
-						case 11:
-						case 'end':
-							return _context3.stop();
-					}
-				}
-			}, null, this, [[0, 7]]);
-		}
-	}]);
-	return TempMail;
+            case 7:
+              return _context.abrupt('return', messages);
+
+            case 10:
+              _context.prev = 10;
+              _context.t0 = _context['catch'](0);
+
+              console.error(_context.t0);
+
+            case 13:
+              return _context.abrupt('return', []);
+
+            case 14:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, null, this, [[0, 10]]);
+    }
+
+    /**
+     * Address Domains
+     */
+
+  }, {
+    key: 'domains',
+    value: function domains() {
+      var domains;
+      return regeneratorRuntime.async(function domains$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.prev = 0;
+              _context2.next = 3;
+              return regeneratorRuntime.awrap(this.fetch(domainsURL()));
+
+            case 3:
+              domains = _context2.sent;
+              return _context2.abrupt('return', domains.json());
+
+            case 7:
+              _context2.prev = 7;
+              _context2.t0 = _context2['catch'](0);
+
+              console.error(_context2.t0);
+
+            case 10:
+              return _context2.abrupt('return', []);
+
+            case 11:
+            case 'end':
+              return _context2.stop();
+          }
+        }
+      }, null, this, [[0, 7]]);
+    }
+
+    /**
+     * Delete Message
+     */
+
+  }, {
+    key: 'deleteMessage',
+    value: function deleteMessage(message_id) {
+      var deletedMessage;
+      return regeneratorRuntime.async(function deleteMessage$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.prev = 0;
+              _context3.next = 3;
+              return regeneratorRuntime.awrap(this.fetch(deleteMessageURL(message_id)));
+
+            case 3:
+              deletedMessage = _context3.sent;
+              return _context3.abrupt('return', deletedMessage.json());
+
+            case 7:
+              _context3.prev = 7;
+              _context3.t0 = _context3['catch'](0);
+
+              console.error(_context3.t0);
+
+            case 10:
+              return _context3.abrupt('return', []);
+
+            case 11:
+            case 'end':
+              return _context3.stop();
+          }
+        }
+      }, null, this, [[0, 7]]);
+    }
+  }]);
+  return TempMail;
 }();
 
 module.exports = TempMail;

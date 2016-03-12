@@ -1,7 +1,7 @@
 {
   "name": "tempmail.js",
   "main": "dist/tempmail.js",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/mileszim/tempmail.js",
   "authors": [
     "Miles Zimmerman <miles@zserver.org>"

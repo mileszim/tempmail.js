@@ -20,12 +20,12 @@ module.exports = function(grunt) {
         dest: 'dist/tempmail-node.js'
       }
     },
-		browserify: {
+    browserify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
-				browserifyOptions: {
-					standalone: 'tempmail'
-				},
+        browserifyOptions: {
+          standalone: 'tempmail'
+        },
         transform: [['babelify', {
           presets: ['es2015'],
           plugins: ['syntax-async-functions', 'transform-regenerator']
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         src:  'src/index.js',
         dest: 'dist/tempmail.js'
       }
-		},
+    },
     uglify: {
       options: {
         banner: '/*! tempmail.min.js <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -48,7 +48,7 @@ module.exports = function(grunt) {
   });
 
   // Load plugins
-	grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-rollup');
