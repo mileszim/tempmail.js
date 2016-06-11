@@ -12,7 +12,7 @@ export default class TempMail {
   /**
    * @constructor
    */
-  constructor(address) {
+  constructor() {
     this.fetch = IS_NODE ? fetch : fetchJsonp;
   }
 
