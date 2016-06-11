@@ -34,13 +34,17 @@ import TempMail from 'tempmail.js';
 // create a random address
 var account = new TempMail();
 
-console.log(account.address); // a0953d5f9e1c01573d290823b1bbe8d1@walkmail.ru
+account.create().then(() => {
+  console.log(account.address); // a0953d5f9e1c01573d290823b1bbe8d1@walkmail.ru
+});
 
 
 // Create your own address at one of the tempmail domains
-var account = new TempMail('example@walkmail.ru');
+var account = new TempMail();
 
-console.log(account.address); // example@walkmail.ru
+account.create('example@walkmail.ru').then(() => {
+  console.log(account.address); // example@walkmail.ru
+});
 ```
 
 
@@ -49,7 +53,7 @@ console.log(account.address); // example@walkmail.ru
 **Get messages**
 
 ```javascript
-account.getMail().then((messages) => {
+account.getMail().then(messages => {
   console.log(messages);
 });
 ```
@@ -81,7 +85,7 @@ account.getMail().then((messages) => {
 **Delete Message**
 
 ```javascript
-account.deleteMessage(someEmail.id).then((deletedMessage) {
+account.deleteMessage(someEmail.id).then(deletedMessage => {
   console.log(deletedMessage);
 });
 ```
@@ -92,7 +96,7 @@ account.deleteMessage(someEmail.id).then((deletedMessage) {
 **Get domains**
 
 ```javascript
-account.domains().then((domains) {
+account.domains().then(domains => {
   console.log(domains);
 });
 ```

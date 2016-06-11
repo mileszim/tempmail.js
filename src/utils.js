@@ -1,5 +1,5 @@
 import md5 from 'blueimp-md5';
-import { ADDRESS_DOMAINS, API_BASE, API_FORMAT, ENDPOINT_INBOX, ENDPOINT_DOMAINS, ENDPOINT_DELETE } from './constants';
+import { API_BASE, API_FORMAT, ENDPOINT_INBOX, ENDPOINT_DOMAINS, ENDPOINT_DELETE } from './constants';
 
 
 /**
@@ -23,12 +23,13 @@ export function formatMessage(msg) {
 
 /**
  * Generate random tempmail address
+ * @param   {array}  domains
  * @returns {string} address
  */
-export function randomEmail() {
+export function randomEmail(domains) {
   var prefix = md5(Math.random() + Date() + Math.random());
-  var suffix = ADDRESS_DOMAINS[Math.floor(Math.random() * ADDRESS_DOMAINS.length)];
-  return prefix + '@' + suffix;
+  var suffix = domains[Math.floor(Math.random() * domains.length)];
+  return prefix + suffix;
 }
 
 
