@@ -4,4 +4,3 @@ export const API_FORMAT       = '/format/' + (IS_NODE ? 'json' : 'jsonp?callback
 export const ENDPOINT_INBOX   = 'mail/id';
 export const ENDPOINT_DOMAINS = 'domains';
 export const ENDPOINT_DELETE  = 'delete/id';
-export const ADDRESS_DOMAINS  = ['dlemail.ru', 'flemail.ru', 'shotmail.ru', 'walkmail.ru'];

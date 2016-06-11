@@ -11,12 +11,23 @@ import { formatMessage, randomEmail, inboxURL, domainsURL, deleteMessageURL } fr
 export default class TempMail {
   /**
    * @constructor
-   * @param {string} address - A temp-mail.ru email address. Generated if not provided.
    */
   constructor(address) {
-    this.address    = address || randomEmail();
+    this.fetch = IS_NODE ? fetch : fetchJsonp;
+  }
+
+  /**
+   * Create
+   * @param {string} address - A temp-mail.ru email address. Generated if not provided.
+   */
+  async create(address) {
+    this.address = address;
+    if (!address) {
+      let domains = await this.domains();
+      this.address = randomEmail(domains);
+    }
     this.address_id = md5(this.address);
-    this.fetch      = IS_NODE ? fetch : fetchJsonp;
+    return this.address;
   }
 
   /**
