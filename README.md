@@ -53,7 +53,7 @@ account.create('example@walkmail.ru').then(() => {
 **Get messages**
 
 ```javascript
-account.getMail().then((messages) => {
+account.getMail().then(messages => {
   console.log(messages);
 });
 ```
@@ -85,7 +85,7 @@ account.getMail().then((messages) => {
 **Delete Message**
 
 ```javascript
-account.deleteMessage(someEmail.id).then((deletedMessage) {
+account.deleteMessage(someEmail.id).then(deletedMessage => {
   console.log(deletedMessage);
 });
 ```
@@ -96,7 +96,7 @@ account.deleteMessage(someEmail.id).then((deletedMessage) {
 **Get domains**
 
 ```javascript
-account.domains().then((domains) {
+account.domains().then(domains => {
   console.log(domains);
 });
 ```
