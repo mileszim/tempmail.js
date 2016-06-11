@@ -34,13 +34,17 @@ import TempMail from 'tempmail.js';
 // create a random address
 var account = new TempMail();
 
-console.log(account.address); // a0953d5f9e1c01573d290823b1bbe8d1@walkmail.ru
+account.create().then(() => {
+  console.log(account.address); // a0953d5f9e1c01573d290823b1bbe8d1@walkmail.ru
+});
 
 
 // Create your own address at one of the tempmail domains
-var account = new TempMail('example@walkmail.ru');
+var account = new TempMail();
 
-console.log(account.address); // example@walkmail.ru
+account.create('example@walkmail.ru').then(() => {
+  console.log(account.address); // example@walkmail.ru
+});
 ```
 
 
