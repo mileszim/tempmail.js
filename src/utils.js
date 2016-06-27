@@ -4,7 +4,7 @@ import md5 from 'blueimp-md5';
 import 'isomorphic-fetch';
 import 'fetch-jsonp';
 
-import { ADDRESS_DOMAINS, API_BASE, API_FORMAT, ENDPOINT_INBOX, ENDPOINT_DOMAINS, ENDPOINT_DELETE, IS_NODE } from './constants';
+import { API_BASE, API_FORMAT, ENDPOINT_INBOX, ENDPOINT_DOMAINS, ENDPOINT_DELETE, IS_NODE } from './constants';
 
 
 /**
