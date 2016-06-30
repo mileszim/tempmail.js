@@ -35,6 +35,49 @@ export default class TempMail {
   }
 
   /**
+   * Polling for an email
+   */
+    pollingMail(mail_from = "", searchTerm = "", interval = 5000, iterations = 10) {
+      return new Promise( (resolve, reject) => {
+        let counter = 0;
+        setInterval( async () => {
+          try {
+            if(counter < iterations) {
+              let queryResult = await this.queryMessages(mail_from, searchTerm);
+              if (queryResult.length) resolve(queryResult);
+              counter++;
+            } else {
+              resolve({'error': 'Timeout exceeded, no messages found.'});
+            }
+          } catch(error) {
+            reject(error);
+          }
+        }, 500);
+      });
+    }
+
+   /**
+    * Querying mails based on parameters
+    */
+    async queryMessages(mail_from = "", searchTerm = "") {
+      try {
+        let messages = await this.getMail();
+        if(messages.length && (mail_from !== "" || searchTerm !== "")) {
+          let messagesFound = [];
+          messages.forEach( (message) => {
+            if(message.mail_from.indexOf(mail_from) != -1 || message.mail_text.indexOf(searchTerm) != -1) {
+              messagesFound.push(message);
+            }
+          });
+          return messagesFound;
+        }
+      } catch(error) {
+        console.error(error);
+      }
+      return [];
+    }
+
+  /**
    * Address Domains
    */
   async domains() {
