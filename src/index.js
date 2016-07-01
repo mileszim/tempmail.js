@@ -37,13 +37,13 @@ export default class TempMail {
   /**
    * Polling for an email
    */
-    pollingMail(mail_from = "", searchTerm = "", interval = 5000, iterations = 10) {
+    pollingMail(filterOptions, interval = 5000, iterations = 10) {
       return new Promise( (resolve, reject) => {
         let counter = 0;
         setInterval( async () => {
           try {
             if(counter < iterations) {
-              let queryResult = await this.queryMessages(mail_from, searchTerm);
+              let queryResult = await this.filterMessages(filterOptions);
               if (queryResult.length) resolve(queryResult);
               counter++;
             } else {
@@ -52,23 +52,28 @@ export default class TempMail {
           } catch(error) {
             reject(error);
           }
-        }, 500);
+        }, interval);
       });
     }
 
    /**
-    * Querying mails based on parameters
+    * Filter messages based on checks over the object's properties
     */
-    async queryMessages(mail_from = "", searchTerm = "") {
+    async filterMessages(filterOptions) {
       try {
         let messages = await this.getMail();
-        if(messages.length && (mail_from !== "" || searchTerm !== "")) {
+        if(messages.length && Object.keys(filterOptions).length !== 0) {
           let messagesFound = [];
-          messages.forEach( (message) => {
-            if(message.mail_from.indexOf(mail_from) != -1 || message.mail_text.indexOf(searchTerm) != -1) {
-              messagesFound.push(message);
-            }
-          });
+              messages.forEach( (message) => {
+                let counter = 0;
+                for(let messageProperty in filterOptions) {
+                  if(filterOptions[messageProperty] != "") {
+                    if(message[messageProperty].indexOf(filterOptions[messageProperty]) != -1) counter++;
+                  }
+                }
+                if(counter === Object.keys(filterOptions).length) messagesFound.push(message);
+              });
+
           return messagesFound;
         }
       } catch(error) {
