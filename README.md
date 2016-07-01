@@ -86,7 +86,6 @@ account.deleteMessage(someEmail.id).then((deletedMessage) {
 });
 ```
 
-
 #### Domains ####
 
 **Get domains**
@@ -106,4 +105,44 @@ account.domains().then((domains) {
   '@shotmail.ru',
   '@walkmail.ru'
 ]
+```
+
+**Filter messages**
+This function calls automatically getMail and filter the response object based on a parameter object containing the filters.
+It returns **all** the email that will pass the filters.
+```javascript
+var filterOptions = {
+  'from': 'somemail@gmail.com',
+  'text': 'May the force be with you.'
+};
+account.filterMessages(filterOptions).then((filteredMails) => {
+  console.log(filteredMails);
+});
+
+var filterOptionsTwo = {
+  'from': 'someothermail@gmail.com',
+  'text': 'Doc, we need to go back in time.',
+  'timestamp': Mon Nov 04 1996,
+  'subject': 'Doc, it\'s marty'
+};
+account.filterMessages(filterOptionsTwo).then((filteredMailsTwo) => {
+  console.log(filteredMailsTwo);
+});
+```
+
+**Polling the getMail response object**
+This function is basically a setInterval wrapper that constantly calls the previous filterMessages() method.
+It returns **all** the email that will pass the filters.
+The parameters are:
+  - filterOptions: Object containing the filters
+  - interval: The setInterval's interval in milliseconds
+  - iterations: Maximum number of attempt after which it'll return "Timeout exceeded"
+
+```javascript
+var filterOptions = {
+  'from': 'somemail@gmail.com'
+};
+account.pollingMail(filterOptions, interval, iterations).then((awaitedMail) => {
+  console.log(awaitedMail);
+});
 ```
