@@ -37,7 +37,7 @@
     "babel-preset-es2015-rollup": "^1.1.1",
     "babelify": "^7.2.0",
     "grunt": "^1.0.1",
-    "grunt-babel": "^6.0.0",
+    "grunt-babel": "^7.0.0",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-uglify": "^1.0.0",
     "grunt-rollup": "^0.6.2",
