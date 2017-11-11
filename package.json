@@ -39,7 +39,7 @@
     "grunt": "^1.0.1",
     "grunt-babel": "^6.0.0",
     "grunt-browserify": "^5.0.0",
-    "grunt-contrib-uglify": "^1.0.0",
+    "grunt-contrib-uglify": "^3.1.0",
     "grunt-rollup": "^0.6.2",
     "rollup-plugin-babel": "^2.4.0"
   }
