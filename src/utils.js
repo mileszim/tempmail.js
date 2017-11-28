@@ -1,5 +1,10 @@
+import 'babel-polyfill';
+
 import md5 from 'blueimp-md5';
-import { ADDRESS_DOMAINS, API_BASE, API_FORMAT, ENDPOINT_INBOX, ENDPOINT_DOMAINS, ENDPOINT_DELETE } from './constants';
+import 'isomorphic-fetch';
+import 'fetch-jsonp';
+
+import { API_BASE, API_FORMAT, ENDPOINT_INBOX, ENDPOINT_DOMAINS, ENDPOINT_DELETE, IS_NODE } from './constants';
 
 
 /**
@@ -20,17 +25,23 @@ export function formatMessage(msg) {
   };
 }
 
-
 /**
  * Generate random tempmail address
  * @returns {string} address
  */
-export function randomEmail() {
-  var prefix = md5(Math.random() + Date() + Math.random());
-  var suffix = ADDRESS_DOMAINS[Math.floor(Math.random() * ADDRESS_DOMAINS.length)];
-  return prefix + '@' + suffix;
+export async function randomEmail() {
+    try {
+      let rightFetch = IS_NODE ? fetch : fetchJsonp;
+      let response = await rightFetch(domainsURL());
+      let domains = JSON.parse(await response.text());
+      let prefix = md5(Math.random() + Date() + Math.random());
+      let suffix = domains[Math.floor(Math.random() * domains.length)];
+      return prefix + suffix;
+    } catch(error) {
+      console.error(error);
+    }
+    return [];
 }
-
 
 /**
  * Assemble API url

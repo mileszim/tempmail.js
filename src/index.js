@@ -14,9 +14,11 @@ export default class TempMail {
    * @param {string} address - A temp-mail.ru email address. Generated if not provided.
    */
   constructor(address) {
-    this.address    = address || randomEmail();
+    this.address = address;
+    if(!address)
+      randomEmail().then((email) => { this.address = email; });
     this.address_id = md5(this.address);
-    this.fetch      = IS_NODE ? fetch : fetchJsonp;
+    this.fetch = IS_NODE ? fetch : fetchJsonp;
   }
 
   /**
