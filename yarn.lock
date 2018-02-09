@@ -1116,10 +1116,6 @@ error-ex@^1.2.0:
   dependencies:
     is-arrayish "^0.2.1"
 
-es6-promise@^3.0.2:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.3.1.tgz#a08cdde84ccdbf34d027a1451bc91d4bcd28a613"
-
 escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
@@ -1420,12 +1416,11 @@ grunt-legacy-util@~1.0.0:
     underscore.string "~3.2.3"
     which "~1.2.1"
 
-grunt-rollup@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/grunt-rollup/-/grunt-rollup-0.6.2.tgz#9db3112e283866c0cfd4f147e491d98997ff3862"
+grunt-rollup@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/grunt-rollup/-/grunt-rollup-9.0.0.tgz#a3f9c26a603f1a5ddd6ec65f2a65cf0e4eaca6d5"
   dependencies:
-    es6-promise "^3.0.2"
-    rollup "^0.x"
+    rollup "0.54.0"
 
 grunt@^1.0.2:
   version "1.0.2"
@@ -2474,9 +2469,9 @@ rollup-pluginutils@^1.5.0:
     estree-walker "^0.2.1"
     minimatch "^3.0.2"
 
-rollup@^0.x:
-  version "0.51.3"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.51.3.tgz#229e0004d6cf8f207f77a7a8dc76924155f4c1dd"
+rollup@0.54.0:
+  version "0.54.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.54.0.tgz#0641b8154ba02706464285d2ead924c486b48ba9"
 
 safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.1"
