@@ -139,33 +139,37 @@ var TempMail = function () {
 
               case 3:
                 response = _context.sent;
-                messages = response.json();
+                _context.next = 6;
+                return response.json();
 
-                if (!messages[0]) {
-                  _context.next = 7;
+              case 6:
+                messages = _context.sent;
+
+                if (!messages.length) {
+                  _context.next = 9;
                   break;
                 }
 
                 return _context.abrupt('return', messages.map(_utils.formatMessage));
 
-              case 7:
+              case 9:
                 return _context.abrupt('return', messages);
 
-              case 10:
-                _context.prev = 10;
+              case 12:
+                _context.prev = 12;
                 _context.t0 = _context['catch'](0);
 
                 console.error(_context.t0);
 
-              case 13:
+              case 15:
                 return _context.abrupt('return', []);
 
-              case 14:
+              case 16:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[0, 10]]);
+        }, _callee, this, [[0, 12]]);
       }));
 
       function getMail() {

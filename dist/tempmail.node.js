@@ -122,8 +122,8 @@ class TempMail {
     return _asyncToGenerator(function* () {
       try {
         let response = yield _this.fetch((0, _utils.inboxURL)(_this.address_id));
-        let messages = response.json();
-        if (messages[0]) {
+        let messages = yield response.json();
+        if (messages.length) {
           return messages.map(_utils.formatMessage);
         }
         return messages;
