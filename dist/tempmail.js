@@ -79,7 +79,6 @@ var API_FORMAT = exports.API_FORMAT = '/format/' + (IS_NODE ? 'json' : 'jsonp?ca
 var ENDPOINT_INBOX = exports.ENDPOINT_INBOX = 'mail/id';
 var ENDPOINT_DOMAINS = exports.ENDPOINT_DOMAINS = 'domains';
 var ENDPOINT_DELETE = exports.ENDPOINT_DELETE = 'delete/id';
-var ADDRESS_DOMAINS = exports.ADDRESS_DOMAINS = ['dlemail.ru', 'flemail.ru', 'shotmail.ru', 'walkmail.ru'];
 
 /***/ }),
 /* 1 */
@@ -109,14 +108,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var TempMail = function () {
   /**
    * @constructor
-   * @param {string} address - A temp-mail.ru email address. Generated if not provided.
+   * @param {string} address - A temp-mail.ru email address or a prefix. Generated if not provided.
    */
   function TempMail(address) {
+    var _this = this;
+
     _classCallCheck(this, TempMail);
 
-    this.address = address || (0, _utils.randomEmail)();
-    this.address_id = (0, _utils.emailId)(this.address);
-    this.fetch = _constants.IS_NODE ? fetch : fetchJsonp;
+    this.active = false;
+    this._useOrCreateEmail(address).then(function (emailAddress) {
+      if (!emailAddress) {
+        throw new Error("Address unable to be created");
+      }
+      _this.address = emailAddress;
+      _this.address_id = (0, _utils.emailId)(_this.address);
+      _this.fetch = _constants.IS_NODE ? fetch : fetchJsonp;
+      _this.active = true;
+    });
   }
 
   /**
@@ -199,23 +207,27 @@ var TempMail = function () {
 
               case 3:
                 _domains = _context2.sent;
-                return _context2.abrupt('return', _domains.json());
+                _context2.next = 6;
+                return _domains.json();
 
-              case 7:
-                _context2.prev = 7;
+              case 6:
+                return _context2.abrupt('return', _context2.sent);
+
+              case 9:
+                _context2.prev = 9;
                 _context2.t0 = _context2['catch'](0);
 
                 console.error(_context2.t0);
 
-              case 10:
+              case 12:
                 return _context2.abrupt('return', []);
 
-              case 11:
+              case 13:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[0, 7]]);
+        }, _callee2, this, [[0, 9]]);
       }));
 
       function domains() {
@@ -244,23 +256,27 @@ var TempMail = function () {
 
               case 3:
                 deletedMessage = _context3.sent;
-                return _context3.abrupt('return', deletedMessage.json());
+                _context3.next = 6;
+                return deletedMessage.json();
 
-              case 7:
-                _context3.prev = 7;
+              case 6:
+                return _context3.abrupt('return', _context3.sent);
+
+              case 9:
+                _context3.prev = 9;
                 _context3.t0 = _context3['catch'](0);
 
                 console.error(_context3.t0);
 
-              case 10:
+              case 12:
                 return _context3.abrupt('return', []);
 
-              case 11:
+              case 13:
               case 'end':
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[0, 7]]);
+        }, _callee3, this, [[0, 9]]);
       }));
 
       function deleteMessage(_x) {
@@ -268,6 +284,61 @@ var TempMail = function () {
       }
 
       return deleteMessage;
+    }()
+
+    // Private
+
+    /**
+     * Generate a random email from domains and prefix
+     */
+
+  }, {
+    key: '_useOrCreateEmail',
+    value: function () {
+      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(addressPrefix) {
+        var domains;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                if (!addressPrefix.includes("@")) {
+                  _context4.next = 2;
+                  break;
+                }
+
+                return _context4.abrupt('return', addressPrefix);
+
+              case 2:
+                _context4.prev = 2;
+                _context4.next = 5;
+                return this.domains();
+
+              case 5:
+                domains = _context4.sent;
+                return _context4.abrupt('return', addressPrefix + '@' + chance.pickone(domains));
+
+              case 9:
+                _context4.prev = 9;
+                _context4.t0 = _context4['catch'](2);
+
+                console.error(_context4.t0);
+
+              case 12:
+                return _context4.abrupt('return', false);
+
+              case 13:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this, [[2, 9]]);
+      }));
+
+      function _useOrCreateEmail(_x2) {
+        return _ref4.apply(this, arguments);
+      }
+
+      return _useOrCreateEmail;
     }()
   }]);
 
@@ -897,7 +968,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.formatMessage = formatMessage;
-exports.randomEmail = randomEmail;
+exports.randomEmailPrefix = randomEmailPrefix;
 exports.emailId = emailId;
 exports.endpoint = endpoint;
 exports.inboxURL = inboxURL;
@@ -931,15 +1002,13 @@ function formatMessage(msg) {
 }
 
 /**
- * Generate random tempmail address
- * @returns {string} address
+ * Generate random tempmail address prefix
+ * @returns {string} addressPrefix
  */
-function randomEmail() {
+function randomEmailPrefix() {
   var name = _chance2.default.name({ middle_initial: true }).toLowerCase().split(' ').join('.');
   var year = _chance2.default.integer({ min: 1970, max: new Date().getFullYear() - 8 });
-  var prefix = name + '-' + year;
-  var suffix = _chance2.default.pickone(_constants.ADDRESS_DOMAINS);
-  return prefix + '@' + suffix;
+  return name + '-' + year;
 }
 
 /**
