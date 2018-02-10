@@ -1,6 +1,5 @@
 import chance from 'chance';
 import {
-  ADDRESS_DOMAINS,
   API_BASE,
   API_FORMAT,
   ENDPOINT_INBOX,
@@ -15,29 +14,27 @@ import {
  */
 export function formatMessage(msg) {
   return {
-    id:        msg.mail_id,
-    uid:       msg.mail_unique_id,
-    from:      msg.mail_from,
-    subject:   msg.mail_subject,
-    preview:   msg.mail_preview,
-    text:      msg.mail_preview.replace(/\s/g, ' ').trim(),
+    id: msg.mail_id,
+    uid: msg.mail_unique_id,
+    from: msg.mail_from,
+    subject: msg.mail_subject,
+    preview: msg.mail_preview,
+    text: msg.mail_preview.replace(/\s/g, ' ').trim(),
     text_only: msg.mail_text_only,
-    html:      msg.mail_html,
+    html: msg.mail_html,
     timestamp: new Date(parseInt(msg.mail_timestamp + '000'))
   };
 }
 
 
 /**
- * Generate random tempmail address
- * @returns {string} address
+ * Generate random tempmail address prefix
+ * @returns {string} addressPrefix
  */
-export function randomEmail() {
+export function randomEmailPrefix() {
   const name = chance.name({ middle_initial: true }).toLowerCase().split(' ').join('.');
   const year = chance.integer({ min: 1970, max: ((new Date()).getFullYear() - 8) });
-  const prefix = `${name}-${year}`;
-  const suffix = chance.pickone(ADDRESS_DOMAINS);
-  return prefix + '@' + suffix;
+  return `${name}-${year}`;
 }
 
 

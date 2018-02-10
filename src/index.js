@@ -5,7 +5,7 @@ import { IS_NODE } from './constants';
 import {
   formatMessage,
   emailId,
-  randomEmail,
+  randomEmailPrefix,
   inboxURL,
   domainsURL,
   deleteMessageURL
@@ -15,13 +15,20 @@ import {
 export default class TempMail {
   /**
    * @constructor
-   * @param {string} address - A temp-mail.ru email address. Generated if not provided.
+   * @param {string} address - A temp-mail.ru email address or a prefix. Generated if not provided.
    */
   constructor(address) {
-    this.address    = address || randomEmail();
-    this.address_id = emailId(this.address);
-    this.fetch      = IS_NODE ? fetch : fetchJsonp;
+    this.active = false;
+    this._useOrCreateEmail(address)
+      .then(emailAddress => {
+        if (!emailAddress) { throw new Error("Address unable to be created"); }
+        this.address = emailAddress;
+        this.address_id = emailId(this.address);
+        this.fetch = IS_NODE ? fetch : fetchJsonp;
+        this.active = true;
+      });
   }
+
 
   /**
    * Get Mail
@@ -44,7 +51,7 @@ export default class TempMail {
   async domains() {
     try {
       let domains = await this.fetch(domainsURL());
-      return domains.json();
+      return await domains.json();
     } catch(error) {
       console.error(error);
     }
@@ -57,10 +64,26 @@ export default class TempMail {
   async deleteMessage(message_id) {
     try {
       let deletedMessage = await this.fetch(deleteMessageURL(message_id));
-      return deletedMessage.json();
+      return await deletedMessage.json();
     } catch(error) {
       console.error(error);
     }
     return [];
+  }
+
+  // Private
+
+  /**
+   * Generate a random email from domains and prefix
+   */
+  async _useOrCreateEmail(addressPrefix) {
+    if (addressPrefix.includes("@")) { return addressPrefix; }
+    try {
+      const domains = await this.domains();
+      return `${addressPrefix}@${chance.pickone(domains)}`;
+    } catch(error) {
+      console.error(error);
+    }
+    return false;
   }
 }

@@ -79,7 +79,6 @@ const API_FORMAT = exports.API_FORMAT = '/format/' + (IS_NODE ? 'json' : 'jsonp?
 const ENDPOINT_INBOX = exports.ENDPOINT_INBOX = 'mail/id';
 const ENDPOINT_DOMAINS = exports.ENDPOINT_DOMAINS = 'domains';
 const ENDPOINT_DELETE = exports.ENDPOINT_DELETE = 'delete/id';
-const ADDRESS_DOMAINS = exports.ADDRESS_DOMAINS = ['dlemail.ru', 'flemail.ru', 'shotmail.ru', 'walkmail.ru'];
 
 /***/ }),
 /* 1 */
@@ -105,12 +104,19 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 class TempMail {
   /**
    * @constructor
-   * @param {string} address - A temp-mail.ru email address. Generated if not provided.
+   * @param {string} address - A temp-mail.ru email address or a prefix. Generated if not provided.
    */
   constructor(address) {
-    this.address = address || (0, _utils.randomEmail)();
-    this.address_id = (0, _utils.emailId)(this.address);
-    this.fetch = _constants.IS_NODE ? fetch : fetchJsonp;
+    this.active = false;
+    this._useOrCreateEmail(address).then(emailAddress => {
+      if (!emailAddress) {
+        throw new Error("Address unable to be created");
+      }
+      this.address = emailAddress;
+      this.address_id = (0, _utils.emailId)(this.address);
+      this.fetch = _constants.IS_NODE ? fetch : fetchJsonp;
+      this.active = true;
+    });
   }
 
   /**
@@ -143,7 +149,7 @@ class TempMail {
     return _asyncToGenerator(function* () {
       try {
         let domains = yield _this2.fetch((0, _utils.domainsURL)());
-        return domains.json();
+        return yield domains.json();
       } catch (error) {
         console.error(error);
       }
@@ -160,11 +166,33 @@ class TempMail {
     return _asyncToGenerator(function* () {
       try {
         let deletedMessage = yield _this3.fetch((0, _utils.deleteMessageURL)(message_id));
-        return deletedMessage.json();
+        return yield deletedMessage.json();
       } catch (error) {
         console.error(error);
       }
       return [];
+    })();
+  }
+
+  // Private
+
+  /**
+   * Generate a random email from domains and prefix
+   */
+  _useOrCreateEmail(addressPrefix) {
+    var _this4 = this;
+
+    return _asyncToGenerator(function* () {
+      if (addressPrefix.includes("@")) {
+        return addressPrefix;
+      }
+      try {
+        const domains = yield _this4.domains();
+        return `${addressPrefix}@${chance.pickone(domains)}`;
+      } catch (error) {
+        console.error(error);
+      }
+      return false;
     })();
   }
 }
@@ -791,7 +819,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.formatMessage = formatMessage;
-exports.randomEmail = randomEmail;
+exports.randomEmailPrefix = randomEmailPrefix;
 exports.emailId = emailId;
 exports.endpoint = endpoint;
 exports.inboxURL = inboxURL;
@@ -825,15 +853,13 @@ function formatMessage(msg) {
 }
 
 /**
- * Generate random tempmail address
- * @returns {string} address
+ * Generate random tempmail address prefix
+ * @returns {string} addressPrefix
  */
-function randomEmail() {
+function randomEmailPrefix() {
   const name = _chance2.default.name({ middle_initial: true }).toLowerCase().split(' ').join('.');
   const year = _chance2.default.integer({ min: 1970, max: new Date().getFullYear() - 8 });
-  const prefix = `${name}-${year}`;
-  const suffix = _chance2.default.pickone(_constants.ADDRESS_DOMAINS);
-  return prefix + '@' + suffix;
+  return `${name}-${year}`;
 }
 
 /**
