@@ -1,5 +1,12 @@
-import md5 from 'blueimp-md5';
-import { ADDRESS_DOMAINS, API_BASE, API_FORMAT, ENDPOINT_INBOX, ENDPOINT_DOMAINS, ENDPOINT_DELETE } from './constants';
+import chance from 'chance';
+import {
+  ADDRESS_DOMAINS,
+  API_BASE,
+  API_FORMAT,
+  ENDPOINT_INBOX,
+  ENDPOINT_DOMAINS,
+  ENDPOINT_DELETE
+} from './constants';
 
 
 /**
@@ -26,9 +33,21 @@ export function formatMessage(msg) {
  * @returns {string} address
  */
 export function randomEmail() {
-  var prefix = md5(Math.random() + Date() + Math.random());
-  var suffix = ADDRESS_DOMAINS[Math.floor(Math.random() * ADDRESS_DOMAINS.length)];
+  const name = chance.name({ middle_initial: true }).toLowerCase().split(' ').join('.');
+  const year = chance.integer({ min: 1970, max: ((new Date()).getFullYear() - 8) });
+  const prefix = `${name}-${year}`;
+  const suffix = chance.pickone(ADDRESS_DOMAINS);
   return prefix + '@' + suffix;
+}
+
+
+/**
+ * Gives same ID for email address
+ * @returns {string} ID
+ */
+export function emailId(emailAddress) {
+  let code = emailAddress.split("").map(c => c.codePointAt(0)).join("");
+  return parseInt(code).toString(16).substr(2,12);
 }
 
 
