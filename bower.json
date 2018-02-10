@@ -1,10 +1,10 @@
 {
   "name": "tempmail.js",
-  "main": "dist/tempmail.js",
-  "version": "0.2.1",
+  "main": "dist/tempmail.min.js",
+  "version": "0.3.0",
   "homepage": "https://github.com/mileszim/tempmail.js",
   "authors": [
-    "Miles Zimmerman <miles@zserver.org>"
+    "Miles Zimmerman <milezim@protonmail.com>"
   ],
   "description": "Programatically generate and receive mail from temporary email addresses. Works in browsers and in node.js.",
   "keywords": [

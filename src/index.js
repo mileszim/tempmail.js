@@ -1,11 +1,15 @@
-import 'babel-polyfill';
-
-import md5 from 'blueimp-md5';
 import 'isomorphic-fetch';
 import 'fetch-jsonp';
 
 import { IS_NODE } from './constants';
-import { formatMessage, randomEmail, inboxURL, domainsURL, deleteMessageURL } from './utils';
+import {
+  formatMessage,
+  emailId,
+  randomEmail,
+  inboxURL,
+  domainsURL,
+  deleteMessageURL
+} from './utils';
 
 
 export default class TempMail {
@@ -15,7 +19,7 @@ export default class TempMail {
    */
   constructor(address) {
     this.address    = address || randomEmail();
-    this.address_id = md5(this.address);
+    this.address_id = emailId(this.address);
     this.fetch      = IS_NODE ? fetch : fetchJsonp;
   }
 

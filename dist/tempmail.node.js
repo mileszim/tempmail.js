@@ -73,13 +73,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var IS_NODE = exports.IS_NODE = typeof window === 'undefined';
-var API_BASE = exports.API_BASE = 'https://api.temp-mail.ru/request/';
-var API_FORMAT = exports.API_FORMAT = '/format/' + (IS_NODE ? 'json' : 'jsonp?callback=messages');
-var ENDPOINT_INBOX = exports.ENDPOINT_INBOX = 'mail/id';
-var ENDPOINT_DOMAINS = exports.ENDPOINT_DOMAINS = 'domains';
-var ENDPOINT_DELETE = exports.ENDPOINT_DELETE = 'delete/id';
-var ADDRESS_DOMAINS = exports.ADDRESS_DOMAINS = ['dlemail.ru', 'flemail.ru', 'shotmail.ru', 'walkmail.ru'];
+const IS_NODE = exports.IS_NODE = typeof window === 'undefined';
+const API_BASE = exports.API_BASE = 'https://api.temp-mail.ru/request/';
+const API_FORMAT = exports.API_FORMAT = '/format/' + (IS_NODE ? 'json' : 'jsonp?callback=messages');
+const ENDPOINT_INBOX = exports.ENDPOINT_INBOX = 'mail/id';
+const ENDPOINT_DOMAINS = exports.ENDPOINT_DOMAINS = 'domains';
+const ENDPOINT_DELETE = exports.ENDPOINT_DELETE = 'delete/id';
+const ADDRESS_DOMAINS = exports.ADDRESS_DOMAINS = ['dlemail.ru', 'flemail.ru', 'shotmail.ru', 'walkmail.ru'];
 
 /***/ }),
 /* 1 */
@@ -92,8 +92,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 __webpack_require__(2);
 
 __webpack_require__(4);
@@ -104,16 +102,12 @@ var _utils = __webpack_require__(5);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var TempMail = function () {
+class TempMail {
   /**
    * @constructor
    * @param {string} address - A temp-mail.ru email address. Generated if not provided.
    */
-  function TempMail(address) {
-    _classCallCheck(this, TempMail);
-
+  constructor(address) {
     this.address = address || (0, _utils.randomEmail)();
     this.address_id = (0, _utils.emailId)(this.address);
     this.fetch = _constants.IS_NODE ? fetch : fetchJsonp;
@@ -122,154 +116,58 @@ var TempMail = function () {
   /**
    * Get Mail
    */
+  getMail() {
+    var _this = this;
 
-
-  _createClass(TempMail, [{
-    key: 'getMail',
-    value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-        var response, messages;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.prev = 0;
-                _context.next = 3;
-                return this.fetch((0, _utils.inboxURL)(this.address_id));
-
-              case 3:
-                response = _context.sent;
-                messages = response.json();
-
-                if (!messages[0]) {
-                  _context.next = 7;
-                  break;
-                }
-
-                return _context.abrupt('return', messages.map(_utils.formatMessage));
-
-              case 7:
-                return _context.abrupt('return', messages);
-
-              case 10:
-                _context.prev = 10;
-                _context.t0 = _context['catch'](0);
-
-                console.error(_context.t0);
-
-              case 13:
-                return _context.abrupt('return', []);
-
-              case 14:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this, [[0, 10]]);
-      }));
-
-      function getMail() {
-        return _ref.apply(this, arguments);
+    return _asyncToGenerator(function* () {
+      try {
+        let response = yield _this.fetch((0, _utils.inboxURL)(_this.address_id));
+        let messages = response.json();
+        if (messages[0]) {
+          return messages.map(_utils.formatMessage);
+        }
+        return messages;
+      } catch (error) {
+        console.error(error);
       }
+      return [];
+    })();
+  }
 
-      return getMail;
-    }()
+  /**
+   * Address Domains
+   */
+  domains() {
+    var _this2 = this;
 
-    /**
-     * Address Domains
-     */
-
-  }, {
-    key: 'domains',
-    value: function () {
-      var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-        var _domains;
-
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                _context2.prev = 0;
-                _context2.next = 3;
-                return this.fetch((0, _utils.domainsURL)());
-
-              case 3:
-                _domains = _context2.sent;
-                return _context2.abrupt('return', _domains.json());
-
-              case 7:
-                _context2.prev = 7;
-                _context2.t0 = _context2['catch'](0);
-
-                console.error(_context2.t0);
-
-              case 10:
-                return _context2.abrupt('return', []);
-
-              case 11:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this, [[0, 7]]);
-      }));
-
-      function domains() {
-        return _ref2.apply(this, arguments);
+    return _asyncToGenerator(function* () {
+      try {
+        let domains = yield _this2.fetch((0, _utils.domainsURL)());
+        return domains.json();
+      } catch (error) {
+        console.error(error);
       }
+      return [];
+    })();
+  }
 
-      return domains;
-    }()
+  /**
+   * Delete Message
+   */
+  deleteMessage(message_id) {
+    var _this3 = this;
 
-    /**
-     * Delete Message
-     */
-
-  }, {
-    key: 'deleteMessage',
-    value: function () {
-      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(message_id) {
-        var deletedMessage;
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                _context3.prev = 0;
-                _context3.next = 3;
-                return this.fetch((0, _utils.deleteMessageURL)(message_id));
-
-              case 3:
-                deletedMessage = _context3.sent;
-                return _context3.abrupt('return', deletedMessage.json());
-
-              case 7:
-                _context3.prev = 7;
-                _context3.t0 = _context3['catch'](0);
-
-                console.error(_context3.t0);
-
-              case 10:
-                return _context3.abrupt('return', []);
-
-              case 11:
-              case 'end':
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this, [[0, 7]]);
-      }));
-
-      function deleteMessage(_x) {
-        return _ref3.apply(this, arguments);
+    return _asyncToGenerator(function* () {
+      try {
+        let deletedMessage = yield _this3.fetch((0, _utils.deleteMessageURL)(message_id));
+        return deletedMessage.json();
+      } catch (error) {
+        console.error(error);
       }
-
-      return deleteMessage;
-    }()
-  }]);
-
-  return TempMail;
-}();
-
+      return [];
+    })();
+  }
+}
 exports.default = TempMail;
 
 /***/ }),
@@ -931,10 +829,10 @@ function formatMessage(msg) {
  * @returns {string} address
  */
 function randomEmail() {
-  var name = _chance2.default.name({ middle_initial: true }).toLowerCase().split(' ').join('.');
-  var year = _chance2.default.integer({ min: 1970, max: new Date().getFullYear() - 8 });
-  var prefix = name + '-' + year;
-  var suffix = _chance2.default.pickone(_constants.ADDRESS_DOMAINS);
+  const name = _chance2.default.name({ middle_initial: true }).toLowerCase().split(' ').join('.');
+  const year = _chance2.default.integer({ min: 1970, max: new Date().getFullYear() - 8 });
+  const prefix = `${name}-${year}`;
+  const suffix = _chance2.default.pickone(_constants.ADDRESS_DOMAINS);
   return prefix + '@' + suffix;
 }
 
@@ -943,9 +841,7 @@ function randomEmail() {
  * @returns {string} ID
  */
 function emailId(emailAddress) {
-  var code = emailAddress.split("").map(function (c) {
-    return c.codePointAt(0);
-  }).join("");
+  let code = emailAddress.split("").map(c => c.codePointAt(0)).join("");
   return parseInt(code).toString(16).substr(2, 12);
 }
 
