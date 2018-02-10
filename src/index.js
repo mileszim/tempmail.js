@@ -29,8 +29,8 @@ export default class TempMail {
   async getMail() {
     try {
       let response = await this.fetch(inboxURL(this.address_id));
-      let messages = response.json();
-      if (messages[0]) { return messages.map(formatMessage); }
+      let messages = await response.json();
+      if (messages.length) { return messages.map(formatMessage); }
       return messages;
     } catch(error) {
       console.error(error);
