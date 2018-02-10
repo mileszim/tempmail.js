@@ -1,7 +1,7 @@
 {
   "name": "tempmail.js",
   "main": "dist/tempmail.min.js",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/mileszim/tempmail.js",
   "authors": [
     "Miles Zimmerman <milezim@protonmail.com>"
