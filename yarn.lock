@@ -982,8 +982,8 @@ chalk@^1.1.3:
     supports-color "^2.0.0"
 
 chance@^1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/chance/-/chance-1.0.13.tgz#666bec2db42b3084456a3e4f4c28a82db5ccb7e6"
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/chance/-/chance-1.0.15.tgz#d1969a6ac127d3aaa4ad1ae6a5a2045510974ebb"
 
 chokidar@^1.6.1, chokidar@^1.7.0:
   version "1.7.0"
