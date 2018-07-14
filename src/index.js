@@ -46,6 +46,54 @@ export default class TempMail {
   }
 
   /**
+   * Polling for an email
+   */
+    pollingMail(filterOptions, interval = 5000, iterations = 10) {
+      return new Promise( (resolve, reject) => {
+        let counter = 0;
+        setInterval( async () => {
+          try {
+            if(counter < iterations) {
+              let queryResult = await this.filterMessages(filterOptions);
+              if (queryResult.length) resolve(queryResult);
+              counter++;
+            } else {
+              resolve({'error': 'Timeout exceeded, no messages found.'});
+            }
+          } catch(error) {
+            reject(error);
+          }
+        }, interval);
+      });
+    }
+
+   /**
+    * Filter messages based on checks over the object's properties
+    */
+    async filterMessages(filterOptions) {
+      try {
+        let messages = await this.getMail();
+        if(messages.length && Object.keys(filterOptions).length !== 0) {
+          let messagesFound = [];
+              messages.forEach( (message) => {
+                let counter = 0;
+                for(let messageProperty in filterOptions) {
+                  if(filterOptions[messageProperty] != "") {
+                    if(message[messageProperty].indexOf(filterOptions[messageProperty]) != -1) counter++;
+                  }
+                }
+                if(counter === Object.keys(filterOptions).length) messagesFound.push(message);
+              });
+
+          return messagesFound;
+        }
+      } catch(error) {
+        console.error(error);
+      }
+      return [];
+    }
+
+  /**
    * Address Domains
    */
   async domains() {
